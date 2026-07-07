@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>didongQuangHien - Hệ thống bán lẻ iPhone chính hãng</title>
+    <style>
+        /* Giao diện tổng thể */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #f5f5f7;
+            overflow-x: hidden;
+        }
+
+        /* Thanh Menu (Header) */
+        header {
+            background-color: rgba(22, 22, 23, 0.85);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #222;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f5f5f7;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .logo span {
+            color: #d4af37; /* Màu Gold hoàng gia */
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #cccccc;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-links li a:hover {
+            color: #d4af37;
+        }
+
+        /* Nút đăng nhập trên menu */
+        .login-trigger-btn {
+            background-color: #0071e3;
+            color: white !important;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .login-trigger-btn:hover {
+            background-color: #0077ed;
+        }
+
+        /* Banner Quảng cáo lớn */
+        .hero {
+            background: linear-gradient(180deg, #161617 0%, #000000 100%);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ffffff, #a2a2a2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: #86868b;
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-btn {
+            background: linear-gradient(135deg, #d4af37, #aa8214);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .hero-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Khu vực hiển thị sản phẩm */
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 600;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .product-card {
+            background-color: #161617;
+            border: 1px solid #222;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: #d4af37;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+        }
+
+        .product-img {
+            max-width: 100%;
+            height: 240px;
+            object-fit: contain;
+            margin-bottom: 25px;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.03);
+        }
+
+        .product-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #f5f5f7;
+        }
+
+        .product-desc {
+            font-size: 0.95rem;
+            color: #86868b;
+            margin-bottom: 20px;
+            min-height: 40px;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #d4af37;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        /* Nút Mua ngay */
+        .buy-btn {
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 22px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .buy-btn:hover {
+            background-color: #0077ed;
+        }
+
+        /* HỆ THỐNG FORM POPUP (ĐĂNG NHẬP & ĐƠN HÀNG) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background-color: #1c1c1e;
+            border: 1px solid #333;
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-box h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: #fff;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            font-size: 24px; color: #aaa;
+            cursor: pointer; background: none; border: none;
+        }
+
+        .close-btn:hover { color: #fff; }
+
+        /* Kiểu mẫu cho ô nhập dữ liệu input */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #86868b;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c2c2e;
+            border: 1px solid #444;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            border-color: #0071e3;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover { background-color: #0077ed; }
+
+        /* Chân trang (Footer) */
+        footer {
+            background-color: #111112;
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid #222;
+            color: #86868b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        footer strong { color: #f5f5f7; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <a href="#" class="logo">didong<span>QuangHien</span></a>
+            <ul class="nav-links">
+                <li><a href="#">Trang Chủ</a></li>
+                <li><a href="#products">Sản Phẩm</a></li>
+                <li><a href="#" class="login-trigger-btn" onclick="openModal('loginModal')">Đăng Nhập</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>iPhone 15 Pro Max</h1>
+        <p>Thiết kế Titan cấp vũ trụ. Chip A17 Pro siêu mạnh mẽ.</p>
+        <a href="#products" class="hero-btn">Mua ngay sản phẩm</a>
+    </section>
+
+    <main class="container" id="products">
+        <h2 class="section-title">Sản Phẩm Sẵn Hàng</h2>
+        
+        <div class="product-grid">
+            
+            <div class="product-card">
+                <div>
+                    <img class="product-img" src="https://vcdn1-sohoa.vnecdn.net/2023/09/13/iphone-15-pro-finish-select-202309-6633-1694567210.jpg" alt="iPhone 15 Pro Max">
+                    <div class="product-title">iPhone 15 Pro Max</div>
+                    <div class="product-desc">Bản Chính Hãng VN/A - 256GB - Titan Tự Nhiên</div>
+                </div>
+                <div>
+                    <div class="product-price">29.490.000 đ</div>
+                    <button class="buy-btn" onclick="openOrderModal('iPhone 15 Pro Max', '29.490.000 đ')">Mua Ngay</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div>
+                    <img class="product-img" src="https://vcdn1-sohoa.vnecdn.net/2023/09/13/iphone-15-finish-select-202309-8438-1694567210.jpg" alt="iPhone 15 Plus">
+                    <div class="product-title">iPhone 15 Plus</div>
+                    <div class="product-desc">Bản Chính Hãng VN/A - 128GB - Hồng Pastel quý phái</div>
+                </div>
+                <div>
+                    <div class="product-price">22.190.000 đ</div>
+                    <button class="buy-btn" onclick="openOrderModal('iPhone 15 Plus', '22.190.000 đ')">Mua Ngay</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div>
+                    <img class="product-img" src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=500&q=80" alt="iPhone 15 Pro">
+                    <div class="product-title">iPhone 15 Pro</div>
+                    <div class="product-desc">Bản Chính Hãng VN/A - 128GB - Titan Xanh</div>
+                </div>
+                <div>
+                    <div class="product-price">24.890.000 đ</div>
+                    <button class="buy-btn" onclick="openOrderModal('iPhone 15 Pro', '24.890.000 đ')">Mua Ngay</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            <h2>Đăng Nhập Hệ Thống</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Tài khoản / Email</label>
+                    <input type="text" id="loginUser" placeholder="Nhập tài khoản..." required>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="loginPass" placeholder="Nhập mật khẩu..." required>
+                </div>
+                <button type="submit" class="submit-btn">Đăng Nhập Ngay</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-box">
+            <button class="close-btn" onclick="closeModal('orderModal')">&times;</button>
+            <h2>Thông Tin Đơn Hàng</h2>
+            
+            <form action="https://formspree.io/f/your_formspree_id" method="POST">
+                <div class="form-group">
+                    <label>Sản phẩm lựa chọn</label>
+                    <input type="text" name="Tên Sản Phẩm" id="modalProductTitle" readonly style="background-color: #111; color: #d4af37; font-weight: bold;">
+                </div>
+                <div class="form-group">
+                    <label>Giá bán</label>
+                    <input type="text" name="Giá Tiền" id="modalProductPrice" readonly style="background-color: #111; color: #d4af37; font-weight: bold;">
+                </div>
+                <div class="form-group">
+                    <label>Họ và tên khách hàng</label>
+                    <input type="text" name="Tên Khách Hàng" placeholder="Nguyễn Văn A" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại nhận hàng</label>
+                    <input type="tel" name="Số Điện Thoại" placeholder="0901234567" required>
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ nhận hàng cụ thể</label>
+                    <textarea name="Địa Chỉ Giao Hàng" rows="3" placeholder="Số nhà, tên đường, xã/phường, quận/huyện..." style="width:100%; background-color:#2c2c2e; border:1px solid #444; border-radius:10px; color:white; padding:12px; font-size:1rem; outline:none;" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn" style="background-color: #d4af37; color: #000;">Xác Nhận Đặt Hàng</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 <strong>didongQuangHien</strong>. Bảo lưu mọi quyền hành bán lẻ.</p>
+        <p style="margin-top: 5px; font-size: 0.8rem; color: #444;">Hệ thống trang thương mại điện tử thiết kế bởi <strong>Quang Hà</strong></p>
+    </footer>
+
+    <script>
+        // Hàm hiển thị Form Modal
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        // Hàm đóng Form Modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Hàm điền tự động dữ liệu sản phẩm khi ấn Mua Ngay
+        function openOrderModal(name, price) {
+            document.getElementById('modalProductTitle').value = name;
+            document.getElementById('modalProductPrice').value = price;
+            openModal('orderModal');
+        }
+
+        // Xử lý logic Đăng nhập trực tiếp trên trình duyệt
+        function handleLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('loginUser').value;
+            alert('Xin chào quý khách ' + user + '! Bạn đã đăng nhập thành công vào hệ thống di động Quang Hiển.');
+            closeModal('loginModal');
+            // Thay đổi chữ Đăng Nhập trên thanh Menu thành Tên tài khoản thành viên
+            document.querySelector('.login-trigger-btn').innerText = "Chào, " + user;
+        }
+    </script>
+</body>
+</html>
